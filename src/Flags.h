@@ -79,6 +79,17 @@ class Flags {
     bool registerAsDefault = false;
     bool log = false;
 
+    // mode.json
+    bool modeJsonFound = false;
+    const char* mode = nullptr;
+    bool usecustomIcon = false;
+    HICON customIcon;
+    // fileLocationSettings.json
+    bool fileLocationJsonFound = false;
+    WCHAR* remotePath = nullptr;
+    bool userRemote = false;
+    const char* office = nullptr;
+
     Flags() = default;
     ~Flags();
 };

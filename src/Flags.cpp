@@ -1,10 +1,25 @@
 /* Copyright 2020 the SumatraPDF project authors (see AUTHORS file).
    License: GPLv3 */
 
+#include <stdio.h>
+#include <iostream>
+#include <cstdlib>
+#include "utils/rapidjson/rapidjson.h"
+#include "utils/rapidjson/document.h"
+#include "utils/rapidjson/stringbuffer.h"
+#include "utils/rapidjson/writer.h"
+#include "utils/rapidjson/filereadstream.h"
+#include "utils/rapidjson/encodings.h"
+
 #include "utils/BaseUtil.h"
 #include "utils/CmdLineParser.h"
 #include "utils/WinUtil.h"
 #include "utils/Log.h"
+
+using namespace rapidjson;
+using namespace std;
+
+
 
 #include "SettingsStructs.h"
 #include "GlobalPrefs.h"
@@ -158,6 +173,15 @@ Flags::~Flags() {
     free(lang);
 }
 
+#include <direct.h>
+#define GetCurrentDir _getcwd
+std::string get_current_dir() {
+    char buff[FILENAME_MAX]; // create string buffer to hold path
+    GetCurrentDir(buff, FILENAME_MAX);
+    string current_working_dir(buff);
+    return current_working_dir;
+}
+
 static void EnumeratePrinters() {
     str::WStr output;
 
@@ -303,6 +327,10 @@ static int GetArgNo(const WCHAR* argName) {
     return seqstrings::StrToIdx(argNames, nameLowerCase);
 }
 
+
+
+
+
 /* parse argument list. we assume that all unrecognized arguments are file names. */
 void ParseCommandLine(const WCHAR* cmdLine, Flags& i) {
     WStrVec argList;
@@ -314,6 +342,146 @@ void ParseCommandLine(const WCHAR* cmdLine, Flags& i) {
 #define has_additional_param() ((argCount > n + 1) && ('-' != additional_param()[0]))
 #define handle_string_param(name) name = str::Dup(argList.at(++n))
 #define handle_int_param(name) name = _wtoi(argList.at(++n))
+
+    //BW Code json injection
+    OutputDebugString(L"Loading Json files \n");
+    OutputDebugStringA(get_current_dir().c_str());
+    OutputDebugStringA("\n");
+
+    string mode;
+    FILE* pFile;
+    Document d;
+    pFile = fopen(".//mode.json", "rb"); // non-Windows use "r"
+    if (pFile != NULL) {
+        char readBuffer[65536];
+        FileReadStream is(pFile, readBuffer, sizeof(readBuffer));
+        d.ParseStream(is);
+        fclose(pFile);
+        OutputDebugString(L"Closed File \n");
+        if (d["mode"].GetString()) {
+            mode = std::string(d["mode"].GetString());
+            OutputDebugStringA("Viewer Mode: ");
+            OutputDebugStringA(mode.c_str());
+            OutputDebugStringA("\n");
+            i.mode = mode.c_str();
+
+            if (d["icon"].GetString()) {
+                i.customIcon = static_cast<HICON>(::LoadImageA(NULL, d["icon"].GetString(),
+                                IMAGE_ICON, 256, 256, LR_LOADFROMFILE));
+                i.usecustomIcon = true;
+                OutputDebugStringA("Custom Icon Set");
+                OutputDebugStringA("\n");
+            }
+
+            pFile = NULL;
+            pFile = fopen("..//..//fileLocationSettings.json", "rb"); // non-Windows use "r"
+            if (pFile != NULL) {
+                OutputDebugStringA("fileLocationSettings found!");
+                OutputDebugStringA("\n");
+                FileReadStream is(pFile, readBuffer, sizeof(readBuffer));
+                d.ParseStream(is);
+                fclose(pFile);
+
+                const char* pdfLocationPath =nullptr;
+
+                if (d["office"].GetString()) {
+                    i.office = d["office"].GetString();
+                }
+
+                if (d["useRemote"].GetBool()) {
+                    OutputDebugStringA("use remote path");
+                    OutputDebugStringA("\n");
+                    if (d["remotePath"].GetString()) {
+
+                        string remotePath = std::string(d["remotePath"].GetString());
+
+                        OutputDebugStringA("Remote path");
+                        OutputDebugStringA("\n");
+                        OutputDebugStringA(pdfLocationPath);
+                        OutputDebugStringA("\n");
+                        string roboCopy = "ROBOCOPY \"" + remotePath + "/PDF\" \"" + "../../PDF" + "\" /MIR /FFT /Z /XA:H /W:5";
+                        OutputDebugStringA("Robocopy command");
+                        OutputDebugStringA("\n");
+                        OutputDebugStringA(roboCopy.c_str());
+                        OutputDebugStringA("\n");
+                        std::system(roboCopy.c_str());
+                        roboCopy = "ROBOCOPY \"" + remotePath + "\" \"" + "../../" + "\" pdfinfo.json";
+                        std::system(roboCopy.c_str());
+                        OutputDebugStringA("Files Copied");
+                        OutputDebugStringA("\n");
+                    }
+                }
+
+                pFile = NULL;
+                pFile = fopen("..//..//pdfinfo.json", "rb"); // non-Windows use "r"
+                if (pFile != NULL) {
+                    OutputDebugStringA("fileLocationSettings found!");
+                    OutputDebugStringA("\n");
+                    FileReadStream is(pFile, readBuffer, sizeof(readBuffer));
+                    d.ParseStream(is);
+                    fclose(pFile);
+
+
+                    // Using a reference for consecutive access is handy and faster.
+                    const Value& a = d["PDFLocations"];
+                    assert(a.IsArray());
+                    for (SizeType idx = 0; idx < a.Size(); idx++) // Uses SizeType instead of size_t
+                    {
+                        const char* pdfType = a[idx]["type"].GetString();
+                        if (string(pdfType) == string(i.mode)) {
+
+                            assert(a[idx]["offices"].IsArray());
+                            for (SizeType idx2 = 0; idx2 < a[idx]["offices"].Size(); idx2++) // Uses SizeType instead of size_t
+                            {
+                                const char* pdfOffice = a[idx]["offices"][idx2].GetString();
+                                if (string(pdfOffice) == string(i.office)) {
+                                    if (a[idx]["location"].GetString()) {
+                                        OutputDebugStringA(a[idx]["location"].GetString());
+                                        OutputDebugStringA("\n");
+                                        string pdfPath = "../.." + string(a[idx]["location"].GetString());
+                                        const char* s = pdfPath.c_str(); // UTF-8 string
+                                        StringStream source(s);
+                                        GenericStringBuffer<UTF16<> > target;
+
+                                        bool hasError = false;
+                                        while (source.Peek() != '\0')
+                                            if (!Transcoder<UTF8<>, UTF16<> >::Transcode(source, target)) {
+                                                hasError = true;
+                                                break;
+                                            }
+
+                                        if (!hasError) {
+                                            const wchar_t* t = target.GetString();
+                                            i.fileNames.Append(str::Dup(t));
+                                        }
+
+
+
+                                    }
+                                }
+                            }
+
+
+
+                        }
+
+
+
+                    }
+
+
+
+                }
+
+
+            }
+
+        }
+
+    }
+
+
+
 
     for (size_t n = 1; n < argCount; n++) {
         WCHAR* argName = argList.at(n);

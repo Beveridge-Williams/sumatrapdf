@@ -1,6 +1,14 @@
 /* Copyright 2020 the SumatraPDF project authors (see AUTHORS file).
    License: GPLv3 */
 
+#include <stdio.h>
+#include <iostream>
+#include "utils/rapidjson/rapidjson.h"
+#include "utils/rapidjson/document.h"
+#include "utils/rapidjson/stringbuffer.h"
+#include "utils/rapidjson/writer.h"
+#include "utils/rapidjson/filereadstream.h"
+
 #include "utils/BaseUtil.h"
 #include "utils/ScopedWin.h"
 #include "utils/WinDynCalls.h"

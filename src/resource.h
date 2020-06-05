@@ -2,9 +2,10 @@
 // Microsoft Visual C++ generated include file.
 // Used by SumatraPDF.rc
 //
-#define IDI_SUMATRAPDF                  1
+#define IDI_BWICON                      1
 #define IDI_PDFDOC                      2
-#define IDI_RAMICRO                     3
+#define IDI_SUMATRAPDF                  3
+#define IDI_RAMICRO                     4
 #define IDD_DIALOG_GOTO_PAGE            129
 #define IDD_DIALOG_GET_PASSWORD         130
 #define IDD_DIALOG_PDF_ASSOCIATE        131

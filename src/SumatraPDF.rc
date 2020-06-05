@@ -69,10 +69,11 @@ END
 #if defined(RAMICRO)
 IDI_SUMATRAPDF          ICON        "..\\gfx\\ramicro.ico"
 #else
-IDI_SUMATRAPDF          ICON "..\\gfx\\SumatraPDF-smaller.ico"
+IDI_SUMATRAPDF          ICON "..\\gfx\\bwIcon.ico"
 #endif
 IDI_PDFDOC              ICON        "..\\gfx\\PdfDoc.ico"
 IDI_RAMICRO             ICON        "..\\gfx\\ramicro.ico"
+IDI_BWICON              ICON        "..\\gfx\\bwIcon.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //

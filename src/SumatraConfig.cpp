@@ -95,5 +95,5 @@ int GetAppIconID() {
     if (gIsRaMicroBuild) {
         return IDI_RAMICRO;
     }
-    return IDI_SUMATRAPDF;
+    return IDI_BWICON;
 }

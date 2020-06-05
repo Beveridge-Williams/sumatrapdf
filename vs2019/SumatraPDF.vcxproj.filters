@@ -520,10 +520,24 @@
     <None Include="..\src\todo.txt">
       <Filter>src</Filter>
     </None>
+    <None Include="..\src\dragcursor.cur" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\src\SumatraPDF.rc">
       <Filter>src</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\gfx\icon1.ico" />
+    <Image Include="..\gfx\bwIcon.ico" />
+    <Image Include="..\gfx\SumatraPDF-smaller.ico" />
+    <Image Include="..\gfx\PdfDoc.ico" />
+    <Image Include="..\gfx\ramicro.ico" />
+    <Image Include="..\src\toolbar_11.bmp" />
+    <Image Include="..\src\reloading.bmp" />
+    <Image Include="..\gfx\ramicro-startscreen_310x230.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="..\src\SumatraPDF.exe.manifest" />
   </ItemGroup>
 </Project>

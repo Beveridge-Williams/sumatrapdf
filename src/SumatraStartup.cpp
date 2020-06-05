@@ -1,6 +1,15 @@
 /* Copyright 2020 the SumatraPDF project authors (see AUTHORS file).
    License: GPLv3 */
 
+#include <stdio.h>
+#include <iostream>
+#include "utils/rapidjson/rapidjson.h"
+#include "utils/rapidjson/document.h"
+#include "utils/rapidjson/stringbuffer.h"
+#include "utils/rapidjson/writer.h"
+#include "utils/rapidjson/filereadstream.h"
+
+
 #include "utils/BaseUtil.h"
 #include "utils/ScopedWin.h"
 #include "utils/WinDynCalls.h"
@@ -19,6 +28,10 @@
 #include "utils/LzmaSimpleArchive.h"
 #include "utils/LogDbg.h"
 #include "utils/Log.h"
+
+
+
+// using namespace rapidjson;
 
 #include "SumatraConfig.h"
 
@@ -170,7 +183,7 @@ static void MakePluginWindow(WindowInfo* win, HWND hwndParent) {
     SetFocus(hwndFrame);
 }
 
-static bool RegisterWinClass() {
+static bool RegisterWinClass(Flags& i) {
     WNDCLASSEX wcex;
     ATOM atom;
 
@@ -178,6 +191,12 @@ static bool RegisterWinClass() {
     LPCWSTR iconName = MAKEINTRESOURCEW(GetAppIconID());
     FillWndClassEx(wcex, FRAME_CLASS_NAME, WndProcFrame);
     wcex.hIcon = LoadIconW(h, iconName);
+
+    //try to sideload Icon
+    //if (i.usecustomIcon) {
+    //    wcex.hIcon = i.customIcon;
+    //}
+
     CrashIf(!wcex.hIcon);
     // For the extended translucent frame to be visible, we need black background.
     wcex.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
@@ -802,6 +821,11 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
     Flags i;
     ParseCommandLine(GetCommandLineW(), i);
+    OutputDebugString(L"Test \n");
+
+
+    //inject PDFs into Sumatra
+    //i.fileNames.Append(str::Dup(L"C:\\Viewer\\Road & Drainage\\EDCM.pdf"));
 
     if (false && gIsDebugBuild) {
         int TestLice(HINSTANCE hInstance, int nCmdShow);
@@ -922,7 +946,7 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     GetFixedPageUiColors(gRenderCache.textColor, gRenderCache.backgroundColor);
 
     gIsStartup = true;
-    if (!RegisterWinClass()) {
+    if (!RegisterWinClass(i)) {
         goto Exit;
     }
 
@@ -982,6 +1006,8 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
             i.fileNames.Append(gGlobalPrefs->reopenOnce->Pop());
         }
     }
+
+    restoreSession = false;
 
     bool showStartPage =
         !restoreSession && i.fileNames.size() == 0 && gGlobalPrefs->rememberOpenedFiles && gGlobalPrefs->showStartPage;
