@@ -45,7 +45,7 @@ A workaround for this was found using the information found here
 http://rolfsnotepad.blogspot.com/2016/06/unpin-edge-and-pin-internet-explorer.html
 but figured Sumatra is open source and I could probably handel all of this internally inside the exe.
 
-This is done by reading JSON files (see file structure below) using rapidJSON libary (found here https://github.com/Tencent/rapidjson/ )
+This is done by reading JSON files (see file structure below) using the rapidJSON libary (found here https://github.com/Tencent/rapidjson/ )
 
 The largest changes to SumatraPDF are found in Flags.cpp and Flags.h mostly adding extra variables for me to store json information into. Some go unused but for now everything seems to work. The Icon was also changed because I could....
 
