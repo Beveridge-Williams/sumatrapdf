@@ -66,9 +66,11 @@
 #define GIT_COMMIT_ID_STR TEXT(QM(GIT_COMMIT_ID))
 #endif
 
-#define URL_LICENSE L"https://github.com/sumatrapdfreader/sumatrapdf/blob/master/AUTHORS"
-#define URL_AUTHORS L"https://github.com/sumatrapdfreader/sumatrapdf/blob/master/AUTHORS"
+#define URL_LICENSE L"https://github.com/Witchdoctr/sumatrapdf/blob/master/AUTHORS"
+#define URL_AUTHORS L"https://github.com/Witchdoctr/sumatrapdf/blob/master/AUTHORS"
 #define URL_TRANSLATORS L"https://github.com/sumatrapdfreader/sumatrapdf/blob/master/TRANSLATORS"
+#define URL_ICONS L"https://github.com/Witchdoctr/sumatrapdf/blob/master/ICONS"
+#define URL_BW L"https://beveridgewilliams.com.au/"
 
 #define LAYOUT_LTR 0
 
@@ -95,6 +97,8 @@ static AboutLayoutInfoEl gAboutLayoutInfo[] = {
     {L"programming", L"The Programmers", URL_AUTHORS},
     {L"translations", L"The Translators", URL_TRANSLATORS},
     {L"licenses", L"Various Open Source", URL_LICENSE},
+    {L"Icons", L"CC BY 3.0 Noun Project", URL_ICONS},
+    {L"Modified By", L"Beveridge Williams", URL_BW},
 #ifdef GIT_COMMIT_ID
     // TODO: use short ID for rightTxt (only first 7 digits) with less hackery
     {L"last change", L"git commit " GIT_COMMIT_ID_STR,
@@ -142,7 +146,7 @@ static WCHAR* GetAppVersion() {
     str::WStr s;
     s.Set(VERSION_TXT);
     if (IsProcess64()) {
-        s.Append(L" 64-bit");
+        s.Append(L" BW EDITION");
     }
 #ifdef DEBUG
     s.Append(L" (dbg)");
