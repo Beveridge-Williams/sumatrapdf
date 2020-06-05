@@ -2,6 +2,8 @@
 
 ## SumatraPDF Reader WITH Json Loading Ability
 
+### Original SumatraPDF Information
+
 SumatraPDF is a multi-format (PDF, EPUB, MOBI, FB2, CHM, XPS, DjVu) reader
 for Windows under (A)GPLv3 license, with some code under BSD license (see
 AUTHORS).
