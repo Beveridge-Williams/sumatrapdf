@@ -667,13 +667,6 @@ static void TocContextMenu(ContextMenuEvent* ev) {
     bool isEmbeddedFile = false;
     PageDestination* dest = nullptr;
     WCHAR* path = nullptr;
-    if (dti->dest) {
-        dest = dti->dest;
-        if (dest) {
-            path = dest->GetValue();
-            isEmbeddedFile = (path != nullptr) && (dest->kind == kindDestinationLaunchEmbedded);
-        }
-    }
     if (isEmbeddedFile) {
         auto embeddedName = dest->GetName();
         const WCHAR* ext = path::GetExtNoFree(embeddedName);
